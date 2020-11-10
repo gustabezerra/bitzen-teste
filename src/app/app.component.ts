@@ -24,15 +24,25 @@ export class AppComponent {
             this.statusBar.styleDefault();
             this.splashScreen.hide();
             await this.configureDeploy();
-
+            await this.performManualUpdate();
         });
     }
 
     async configureDeploy() {
         const config = {
             appI: '9b7e8e78',
-            channel: 'Production'
+            channel: 'Production',
+            debug: true
         };
         await Deploy.configure(config);
+    }
+
+    async performManualUpdate() {
+        const update = await Deploy.checkForUpdate();
+        if (update.available) {
+            await Deploy.downloadUpdate((progress) => {
+                console.log(progress);
+            });
+        }
     }
 }
